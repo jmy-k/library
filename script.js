@@ -1,76 +1,161 @@
-
-const $form = document.querySelector('fieldset')
+const $form = document.querySelector('#bookform');
 const $titleInput = $form.querySelector('#title');
 const $authorInput = $form.querySelector('#author');
 const $pagesInput = $form.querySelector('#pages');
 const $readInput = $form.querySelector('#read');
-const $notreadInput = $form.querySelector('#notread');
-const newBookButton = document.querySelector(".addnewbookbutton")
-const bookForm = document.querySelector(".bookform")
-const addNewBookButton = document.querySelector(".submit")
-const library = document.querySelector(".library");
+const newBookButton = document.querySelector('.addnewbookbutton');
+const submitButton = document.querySelector('.submit');
+const library = document.querySelector('.library');
+const validationMessage = document.querySelectorAll('.validationmessage');
+const bookExists = document.querySelector('#bookexistence');
+const overlay = document.querySelector('.overlay')
 
-let myLibrary=[];
+let myLibrary = [];
 
 /* Object Constructor */
-function Book(title,author,pages,read){
-    this.title=title;
-    this.author=author;
-    this.pages=pages;
-    this.read=read;
+function Book(title, author, pages, read) {
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.read = read;
 }
 
 /* Add book to the myLibrary array */
-function addBookToLibrary(){
-    let title = $titleInput.value;
-    let author = $authorInput.value;
-    let pages = $pagesInput.value;
-    if ($readInput.checked === true ){
-        read = "read";
-    }
-    else if ($notreadInput.checked === true){
-        read = "not read yet";
-    }
+function addBookToLibrary() {
+  const title = $titleInput.value;
+  const author = $authorInput.value;
+  const pages = $pagesInput.value;
+  const read = $readInput.checked ? 'read' : 'not read yet';
 
-    let newBook = new Book(title,author,pages,read)
-    myLibrary.push(newBook);
-    displayBook();
+  if (title && author && pages) {
+    const existingBook = myLibrary.find(book => (
+      book.title === title &&
+      book.author === author &&
+      book.pages === pages
+    ));
+
+    if (existingBook) {
+      bookExists.style.display = 'block';
+      overlay.style.display='block';
+    } else {
+      const newBook = new Book(title, author, pages, read);
+      myLibrary.push(newBook);
+      displayBooks();
+      $form.reset();
+      $form.style.display = 'none';
+      bookExists.style.display = 'none';
+      hideValidationMessages();
+    }
+  }
 }
 
-/* displsy myLibrary on page */
-function displayBook(){
+/* Display myLibrary on the page */
+function displayBooks() {
+  library.innerHTML = '';
+
+  for (let i = 0; i < myLibrary.length; i++) {
+    const book = myLibrary[i];
+
     const newBook = document.createElement('div');
     newBook.classList.add('book');
+
     const title = document.createElement('div');
     title.classList.add('title');
+    title.textContent = '"' + book.title + '"';
+
     const author = document.createElement('div');
     author.classList.add('author');
+    author.textContent = 'by ' + book.author;
+
     const pages = document.createElement('div');
     pages.classList.add('pages');
-    const read = document.createElement('div');
-    read.classList.add('read');
+    pages.textContent = book.pages + " pages";
 
-    for (let i = 0, l = myLibrary.length;i<l;i++){
-        let obj = myLibrary[i];
-        title.textContent = "Title: "+ obj.title;
-        author.textContent = "Author: "+ obj.author;
-        pages.textContent = "Pages: " + obj.pages;
-        read.textContent = "Read? " + obj.read;
-    }
+    const bookButtons=document.createElement('div');
+    bookButtons.className="bookbuttons";
+
+    const read = document.createElement('button');
+    read.type = 'button';
+    read.className = book.read === 'read' ? 'read' : 'notread';
+    read.addEventListener('click', function (event) {
+      toggleReadStatus(read);
+    });
+    read.textContent = book.read;
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'delete';
+    deleteButton.type = 'button';
+    deleteButton.className="delete";
+    deleteButton.addEventListener('click', function (event) {
+      deleteBook(i);
+    });
+
+    bookButtons.appendChild(read);
+    bookButtons.appendChild(deleteButton);
 
     newBook.appendChild(title);
     newBook.appendChild(author);
     newBook.appendChild(pages);
-    newBook.appendChild(read);
+    newBook.appendChild(bookButtons);
+    
 
     library.appendChild(newBook);
+  }
 }
 
-newBookButton.addEventListener('click',()=>{
-    bookForm.style.visibility="visible";
-})
+function toggleReadStatus(button) {
+  if (button.className === 'read') {
+    button.className = 'notread';
+    button.textContent = 'not read';
+  } else if (button.className === 'notread') {
+    button.className = 'read';
+    button.textContent = 'read';
+  }
+}
 
-addNewBookButton.addEventListener('click',function(event){
-    event.preventDefault();
+function deleteBook(index) {
+  myLibrary.splice(index, 1);
+  displayBooks();
+}
+
+newBookButton.addEventListener('click', () => {
+  $form.style.display = 'block';
+  overlay.style.display='block';
+});
+
+submitButton.addEventListener('click', function (event) {
+  event.preventDefault();
+  if (!$form.checkValidity()) {
+    showValidationMessages();
+  } else {
+    overlay.style.display='none';
     addBookToLibrary();
-})
+  }
+});
+
+function showValidationMessages() {
+  validationMessage.forEach((div) => {
+    const targetInputId = div.dataset.validationFor;
+    const targetInput = document.querySelector(`#${targetInputId}`);
+    div.style.display = targetInput && !targetInput.validity.valid ? 'block' : 'none';
+  });
+}
+
+function hideValidationMessages() {
+  validationMessage.forEach((div) => {
+    div.style.display = 'none';
+  });
+}
+
+function closeForm() {
+  $form.reset();
+  $form.style.display = 'none';
+  overlay.style.display='none';
+  hideValidationMessages();
+}
+
+window.addEventListener('click', function (event) {
+    if (event.target === overlay) {
+      closeForm();
+    }
+});

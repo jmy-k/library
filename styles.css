@@ -147,6 +147,9 @@ input[type="checkbox"]:checked::before {
     background-color: #9d174d;
 }
 
+input[type="checkbox"]:hover::before {
+    box-shadow: 0px 0px 8px 4px #ec489980;
+  }
 
 /*only shows when inputs are invalid*/
 .validationmessage {

@@ -115,7 +115,7 @@ input{
     width:80%;
 }
 
-input:focus{
+input#title:focus, input#author:focus, input#pages:focus{
     outline:none;
     box-shadow: 0px 0px 8px 4px #ec489980;
 }
@@ -129,6 +129,7 @@ input[type="checkbox"] {
     outline: none;
     margin: 0;
 }
+
 /*custom checkbox style*/
 input[type="checkbox"]::before {
     content: "";

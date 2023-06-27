@@ -6,18 +6,20 @@ const $pagesInput = $form.querySelector('#pages');
 const $readInput = $form.querySelector('#read');
 const $notreadInput = $form.querySelector('#notread');
 const newBookButton = document.querySelector(".addnewbookbutton")
-const bookForm = document.querySelector(".bookform")
+const bookForm = document.querySelector("#bookform")
 const addNewBookButton = document.querySelector(".submit")
 const library = document.querySelector(".library");
 
 let myLibrary=[];
 
 /* Object Constructor */
-function Book(title,author,pages,read){
+class Book {
+    constructor(title,author,pages,read){
     this.title=title;
     this.author=author;
     this.pages=pages;
     this.read=read;
+    }
 }
 
 /* Add book to the myLibrary array */

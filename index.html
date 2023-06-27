@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <meta charset=”UTF-8”>
+   <meta charset="UTF-8">
    <title>My Library</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="styles.css">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
    <div class="container">
       <div class="header">
          <div class="title">My Library</div>
-         <button class="addnewbookbutton">New Book</button>
-         <div class="bookform" style="visibility:hidden">
-            <form action="post">
-               <fieldset>
-                  <label for="title">Title</label>
-                  <input type="text" name="title" id="title">
+         <button type="button" class="addnewbookbutton">New Book</button>
+      </div>
+      <div class="overlay"></div>
+      <form action="post" id="bookform">
+         <fieldset>
+            <div class="formheader">Add a new book</div>
+            <div class="formtitle">
+               <input type="text" name="title" id="title" minlength="1" placeholder="Title"required>
+               <div class="validationmessage" data-validation-for="title">Please enter a title</div>
+            </div>
 
-                  <label for="author">Author</label>
-                  <input type="text" name="author" id="author">
+            <div class="formauthor">
+               <input type="text" name="author" id="author" minlength="1" placeholder="Author" required>
+               <div class="validationmessage" data-validation-for="author">Please enter an author</div>
+            </div>
 
-                  <label for="pages">Pages</label>
-                  <input type="text" name="pages" id="pages">
+            <div class="formpages">
+               <input type="number" name="pages" id="pages" minlength="1" placeholder="Pages" required>
+               <div class="validationmessage" data-validation-for="pages">Please enter page number</div>
+            </div>
 
-                  <div class="readquestion">
-                     <label for="readquestion">Read?</label>
-                     <label for="read">Yes</label>
-                     <input type="checkbox" name="read" value=true id="read">
-                     <label for="notread">No</label>
-                     <input type="checkbox" name="notread" value=false id="notread">
-                  </div>
-               </fieldset>
+            <div class="readquestion">
+               <label for="read">Have you read it?</label>
+               <input type="checkbox" name="read" id="read">
+            </div>
+            <div class="formbuttons">
                <button type="submit" class="submit">Submit</button>
-            </form>
-         </div>
-      </div>
-      <div class="library">
-      </div>
+               <button type="button" class="cancel" onclick="closeForm()">Cancel</button>
+            </div>
+            <div id="bookexistence">Book already in library</div>
+         </fieldset>
+      </form>
+      <div class="library"> </div>
    </div>
    <script src="script.js"></script>
 </body>
